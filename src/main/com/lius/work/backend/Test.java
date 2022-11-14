@@ -43,11 +43,14 @@ public class Test {
 //        ComponentUseOperationData<OperationBase> operationBaseComponentUseOperationData = new ComponentUseOperationData<>(data);
 //        System.out.println(operationBaseComponentUseOperationData.get(1));
 
-        ArrayList<Integer> integers = new ArrayList<>();
-        integers.add(0, 1);
-        integers.add(1,2);
-        integers.clear();
-        System.out.println(integers);
+//        ArrayList<Integer> integers = new ArrayList<>();
+//        integers.add(0, 1);
+//        integers.add(1,2);
+//        integers.clear();
+//        System.out.println(integers);
+
+//        ComponentUseOperationData<Object> objectComponentUseOperationData = new ComponentUseOperationData<>();
+//        new OperationFileStream().readStream(objectComponentUseOperationData,"D:\\桌面\\test");
     }
 
 }

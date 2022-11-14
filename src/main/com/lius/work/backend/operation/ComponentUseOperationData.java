@@ -1,11 +1,16 @@
 package com.lius.work.backend.operation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComponentUseOperationData<T> {
+public class ComponentUseOperationData<T> implements Serializable {
+
+    public static final long serialVersionUID = 24324234L;
+
     private List<T> data;
     private List<Boolean> answer = new ArrayList<Boolean>();
+    private Integer exerciseCount;
 
     public ComponentUseOperationData() {
     }
@@ -30,5 +35,13 @@ public class ComponentUseOperationData<T> {
 
     public void cleanAnswer() {
         if (answer != null) answer.clear();
+    }
+
+    public void setExerciseCount(Integer exerciseCount) {
+        this.exerciseCount = exerciseCount;
+    }
+
+    public Integer getExerciseCount() {
+        return exerciseCount;
     }
 }

@@ -2,42 +2,29 @@ package com.lius.work.view;
 
 import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import com.lius.work.backend.data.OperationFileStream;
 import com.lius.work.backend.exercise.ExerciseSheet;
 import com.lius.work.backend.exercise.OperationTable;
 import com.lius.work.backend.operation.ComponentUseOperationData;
 import com.lius.work.backend.operation.OperationBase;
 
-import javax.swing.JButton;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JToolBar;
-import javax.swing.JSeparator;
-import javax.swing.JLabel;
-
+import java.io.File;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
-
 public class PracticeGui2 extends JFrame {
-    private static final long serialVersionUID = -639767039479761232L;
-    static final int WINDOW_WIDTH = 580; //���ڿ��
-    static final int WINDOW_HEIGHT = 330;  //���ڸ߶�
+    static final int WINDOW_WIDTH = 580; // 窗口的宽度
+    static final int WINDOW_HEIGHT = 330;  // 窗口的高度
     static final int OP_AMOUNT = 20;  //窗口内显示算式的总数量
     static final int OP_COLUMN = 5; // 算式的列数
     static final int OP_WIDTH = 65; // 算式的宽度
     static final int ANSWER_WIDTH = 35; // 答案的宽度
-    static final int COMPONET_HEIGHT = 25; // 算式,答案的高度
+    static final int COMPONENT_HEIGHT = 25; // 算式,答案的高度
 
     private JPanel contentPane;
     private JTextField[] tfOp;
@@ -57,9 +44,7 @@ public class PracticeGui2 extends JFrame {
     private int totalPages; // 总页数
     private int currentPage; // 当前处于多少页
     private boolean submitted; // 是否提交了答案
-
     private String operationType; // 题库使用的类型
-
     private final ButtonGroup buttonGroupTypes = new ButtonGroup();
     private final ButtonGroup buttonGroupAmount = new ButtonGroup();
 
@@ -79,7 +64,6 @@ public class PracticeGui2 extends JFrame {
     // 构造器
     public PracticeGui2() {
         setResizable(false);
-
         setTitle("\u53E3\u7B97\u7EC3\u4E60");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -178,7 +162,7 @@ public class PracticeGui2 extends JFrame {
         mntmNext = new JMenuItem("\u4E0B\u4E00\u9875");
         menuView.add(mntmNext);
 
-         // 为工具栏目
+        // 为工具栏目
         JToolBar toolBar = new JToolBar();
         toolBar.setBounds(0, 24, 564, 25);
         toolBar.setFloatable(false);
@@ -203,16 +187,14 @@ public class PracticeGui2 extends JFrame {
         //导入题目和答案
         mntnIn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("导入题目和答案");
-                //impExercise();
+                impExercise();
             }
         });
 
         // 导出题目和答案
         mntmOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("导出题目和答案");
-                //expExercise();
+                expExercise();
             }
         });
         // 加法题目
@@ -384,19 +366,19 @@ public class PracticeGui2 extends JFrame {
             }
         });
 
-       ;
+        ;
 
         // 工具栏上的按钮动作
         btnIn.addActionListener(new ActionListener() {// 导入题目 按钮动作
             public void actionPerformed(ActionEvent arg0) {
                 System.out.println("导入题目");
-                //impExercise();
+                impExercise();
             }
         });
         btnOut.addActionListener(new ActionListener() { // 导出题目 按钮动作
             public void actionPerformed(ActionEvent e) {
                 System.out.println("导出题目");
-                //expExercise();
+                expExercise();
             }
         });
         btnGenrate.addActionListener(new ActionListener() {
@@ -404,6 +386,8 @@ public class PracticeGui2 extends JFrame {
                 System.out.println("重新生成题目 按钮动作");
                 clearAnswers();
                 submitted = false;
+                btnSubmit.setEnabled(true);
+                mntmSubmit.setEnabled(true);
                 clearComponentUseData();
                 List<OperationBase> data = ExerciseSheet.generateOperationByTypeAndCount(operationType, exerciseCount).getData();
                 componentUseData = new ComponentUseOperationData<>(data);
@@ -446,55 +430,48 @@ public class PracticeGui2 extends JFrame {
     }
 
     // TODO: 导入文件
-//	private void impExercise(){
-//		JFileChooser jfc = new JFileChooser();
-//		jfc.showOpenDialog(null);
-//		File file=jfc.getSelectedFile();
-//		try{
-//
-//
-//            new OperationFileStream().readStream(,file.getAbsolutePath());
-//			exercise = Exercise_3_2_ch7.loadObject();
-//			JOptionPane.showMessageDialog(null, "������Ŀ�ɹ���",
-//					"��ʾ",JOptionPane.INFORMATION_MESSAGE);
-//			this.submitted = false;
-//			updateComponets();
-//		}catch(NullPointerException npe){
-//            JOptionPane.showMessageDialog(null, "������Ŀʧ�ܣ���������Ϊѡ���˴�����ļ�",
-//                    "����",JOptionPane.ERROR_MESSAGE);
-//		}catch(ExerciseIOException e){
-//			JOptionPane.showMessageDialog(null, "������Ŀʧ�ܣ���������Ϊѡ���˴�����ļ�",
-//					"����",JOptionPane.ERROR_MESSAGE);
-//		}
-//	}
+    private void impExercise() {
+        JFileChooser jfc = new JFileChooser();
+        jfc.showOpenDialog(null);
+        File file = jfc.getSelectedFile();
+        try {
+            Object o = new OperationFileStream().readStream(file.getAbsolutePath());
+            componentUseData = (ComponentUseOperationData<OperationBase>) o;
+            JOptionPane.showMessageDialog(null, "导入题目成功！",
+                    "提示", JOptionPane.INFORMATION_MESSAGE);
+            this.exerciseCount = componentUseData.getExerciseCount();
+            this.submitted = false;
+            updateComponents();
+        } catch (NullPointerException npe) {
+            System.out.println("NullPointerException " + npe.getMessage());
+            JOptionPane.showMessageDialog(null, "导入题目失败，可能是因为选择了错误的文件",
+                    "错误", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            System.out.println("Exception " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "导入题目失败，可能是因为选择了错误的文件",
+                    "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-    // TODO: 导出
-//    private void expExercise() {  //������Ŀ
-//        JFileChooser jfc = new JFileChooser();
-//        jfc.showSaveDialog(null);
-//        File file = jfc.getSelectedFile();
-//        try {
-//            exercise.saveObject(file.getAbsolutePath());
-//            JOptionPane.showMessageDialog(null, "������Ŀ�ɹ���",
-//                    "��ʾ", JOptionPane.INFORMATION_MESSAGE);
-//        } catch (NullPointerException npe) {
-//
-//        } catch (ExerciseIOException e) {
-//            JOptionPane.showMessageDialog(null, "������Ŀʧ�ܣ���������Ϊ�����ļ�ʧ��",
-//                    "����", JOptionPane.ERROR_MESSAGE);
-//        }
-//    }
-
-//    	private void generateExercise(){ //����������Ŀ
-//		int length = exercise.length();
-//		exercise.generateWithFormerType(length);
-//		updateComponets();
-//	}
+    private void expExercise() {  //导出题目
+        JFileChooser jfc = new JFileChooser();
+        jfc.showSaveDialog(null);
+        File file = jfc.getSelectedFile();
+        try {
+            componentUseData.setExerciseCount(this.exerciseCount);
+            new OperationFileStream().writeStream(componentUseData, file.getAbsolutePath());
+            JOptionPane.showMessageDialog(null, "导出题目成功！",
+                    "提示", JOptionPane.INFORMATION_MESSAGE);
+        } catch (NullPointerException npe) {
+            JOptionPane.showMessageDialog(null, "导出题目失败，可能是因为创建文件失败",
+                    "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     private void judgeAnswer() { // 判断答案是否正确
         this.submitted = true;
         System.out.println("页数: " + this.currentPage + " 的答案");
-        for(int i = 1; i < totalPages;i++){
+        for (int i = 1; i < totalPages; i++) {
             getAnswers(i); // 获取答案, 当前页数的
         }
         // getAnswers(this.currentPage); // 获取答案, 当前页数的
@@ -562,18 +539,18 @@ public class PracticeGui2 extends JFrame {
         for (int i = 0; i < OP_AMOUNT; i++) {
             tfOp[i] = new JTextField();
             tfOp[i].setBounds(20 + (i % OP_COLUMN) * (OP_WIDTH + ANSWER_WIDTH + 5),
-                    60 + (i / OP_COLUMN) * (COMPONET_HEIGHT + 10),
+                    60 + (i / OP_COLUMN) * (COMPONENT_HEIGHT + 10),
                     OP_WIDTH,
-                    COMPONET_HEIGHT);
+                    COMPONENT_HEIGHT);
             tfOp[i].setHorizontalAlignment(JTextField.RIGHT);
             tfOp[i].setEditable(false);
             contentPane.add(tfOp[i]);
 
             tfAns[i] = new JTextField();
             tfAns[i].setBounds(20 + OP_WIDTH + (i % OP_COLUMN) * (OP_WIDTH + ANSWER_WIDTH + 5),
-                    60 + (i / OP_COLUMN) * (COMPONET_HEIGHT + 10),
+                    60 + (i / OP_COLUMN) * (COMPONENT_HEIGHT + 10),
                     ANSWER_WIDTH,
-                    COMPONET_HEIGHT);
+                    COMPONENT_HEIGHT);
             contentPane.add(tfAns[i]);
         }
     }

@@ -7,13 +7,11 @@ import java.io.*;
 public class OperationFileStream extends OperationFileAbstractStream {
 
     @Override
-    public <T> void readStream(OperationTable<T> obj, String path) {
+    public Object readStream(String path) {
         ObjectInputStream objectInputStream = null;
         try {
             objectInputStream = new ObjectInputStream(new FileInputStream(path));
-            T t = (T) objectInputStream.readObject();
-            obj.construct((t));
-
+            return objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
